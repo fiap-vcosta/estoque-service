@@ -1,0 +1,14 @@
+---
+description: Escopo do estoque-service
+alwaysApply: true
+---
+
+# Restrições do projeto (`estoque-service`)
+
+- Escopo: **ItemEstoque**, entrada, reserva (`FOR UPDATE`), consumo, liberação e fila de pendências (prioridade = ordem de aprovação da ordem de serviço). Persistência **PostgreSQL**.
+- Publica `EstoqueReservado` e `EstoqueEmFalta`.
+- Consome `OrdemServicoAprovada`, `OrdemServicoFinalizada` e `OrdemServicoDescartada`.
+- API interna em `/system/estoque`.
+- Não é dono de ordem de serviço, orçamento, catálogo administrativo nem emissão de JWT.
+- Não inventar features fora desse escopo.
+- README autocontido: sem referências a pastas fora do Git nem a numeração de documentos pessoais.

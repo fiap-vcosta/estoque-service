@@ -1,0 +1,351 @@
+{
+  "meta": {
+    "version": "1.1.0",
+    "exportedAt": "2026-11-05T00:00:00.000Z",
+    "exportedUsing": "Requestly API Client"
+  },
+  "records": [
+    {
+      "id": "e1000001-0000-4000-8000-000000000001",
+      "name": "estoque-service",
+      "type": "collection",
+      "parentId": null,
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0",
+      "description": "CRUD Staff + system snapshot. JWT: ./scripts/setup-local-jwt.sh && ./scripts/mint-staff-jwt.sh. Environments: Docker (8082), Local (8082), GCP Gateway."
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000010",
+      "name": "01-health",
+      "type": "collection",
+      "parentId": "e1000001-0000-4000-8000-000000000001",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0",
+      "description": "Health"
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000011",
+      "name": "health",
+      "type": "api",
+      "parentId": "e1000001-0000-4000-8000-000000000010",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/estoque/health",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000020",
+      "name": "02-crud",
+      "type": "collection",
+      "parentId": "e1000001-0000-4000-8000-000000000001",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "bearer_token",
+          "token": "{{token}}"
+        }
+      },
+      "rank": "a1",
+      "description": "JWT staff"
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000021",
+      "name": "POST item",
+      "type": "api",
+      "parentId": "e1000001-0000-4000-8000-000000000020",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/estoque/itens",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"codigo\": \"FILTRO\",\n  \"tipo\": \"Peca\",\n  \"nome\": \"Filtro de oleo\",\n  \"unidadeMedida\": \"Unidade\",\n  \"precoVenda\": 45.9,\n  \"saldo\": 10,\n  \"saldoReservado\": 0\n}"
+          },
+          "contentType": "application/json"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000022",
+      "name": "GET itens",
+      "type": "api",
+      "parentId": "e1000001-0000-4000-8000-000000000020",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/estoque/itens",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000023",
+      "name": "GET item",
+      "type": "api",
+      "parentId": "e1000001-0000-4000-8000-000000000020",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/estoque/itens/{{itemId}}",
+          "method": "GET",
+          "headers": [],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a2"
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000024",
+      "name": "POST registrar-entrada",
+      "type": "api",
+      "parentId": "e1000001-0000-4000-8000-000000000020",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/estoque/itens/{{itemId}}/registrar-entrada",
+          "method": "POST",
+          "headers": [
+            {
+              "id": 1,
+              "key": "Content-Type",
+              "value": "application/json",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "raw",
+            "raw": "{\n  \"quantidade\": 5\n}"
+          },
+          "contentType": "application/json"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a3",
+      "description": "Reavalia pendências após entrada"
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000030",
+      "name": "03-system",
+      "type": "collection",
+      "parentId": "e1000001-0000-4000-8000-000000000001",
+      "deleted": false,
+      "data": {
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a2",
+      "description": "X-Service-Key; fora do Gateway público"
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000031",
+      "name": "GET system item",
+      "type": "api",
+      "parentId": "e1000001-0000-4000-8000-000000000030",
+      "deleted": false,
+      "data": {
+        "type": "http",
+        "request": {
+          "url": "{{baseUrl}}/system/estoque/itens/{{itemId}}",
+          "method": "GET",
+          "headers": [
+            {
+              "id": 1,
+              "key": "X-Service-Key",
+              "value": "{{serviceAuthKey}}",
+              "isEnabled": true,
+              "description": ""
+            }
+          ],
+          "queryParams": [],
+          "pathVariables": [],
+          "body": {
+            "contentType": "none"
+          },
+          "contentType": "none"
+        },
+        "auth": {
+          "type": "inherit"
+        }
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000100",
+      "name": "Docker",
+      "type": "environment",
+      "parentId": null,
+      "deleted": false,
+      "data": {
+        "variables": [
+          {
+            "id": 1,
+            "key": "baseUrl",
+            "value": "http://localhost:8082",
+            "isEnabled": true
+          },
+          {
+            "id": 2,
+            "key": "token",
+            "value": "",
+            "isEnabled": true
+          },
+          {
+            "id": 3,
+            "key": "serviceAuthKey",
+            "value": "local-service-auth-key-change-me",
+            "isEnabled": true
+          },
+          {
+            "id": 4,
+            "key": "itemId",
+            "value": "1",
+            "isEnabled": true
+          }
+        ]
+      },
+      "rank": "a0"
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000101",
+      "name": "Local",
+      "type": "environment",
+      "parentId": null,
+      "deleted": false,
+      "data": {
+        "variables": [
+          {
+            "id": 1,
+            "key": "baseUrl",
+            "value": "http://localhost:8082",
+            "isEnabled": true
+          },
+          {
+            "id": 2,
+            "key": "token",
+            "value": "",
+            "isEnabled": true
+          },
+          {
+            "id": 3,
+            "key": "serviceAuthKey",
+            "value": "local-service-auth-key-change-me",
+            "isEnabled": true
+          },
+          {
+            "id": 4,
+            "key": "itemId",
+            "value": "1",
+            "isEnabled": true
+          }
+        ]
+      },
+      "rank": "a1"
+    },
+    {
+      "id": "e1000001-0000-4000-8000-000000000102",
+      "name": "GCP-Gateway",
+      "type": "environment",
+      "parentId": null,
+      "deleted": false,
+      "data": {
+        "variables": [
+          {
+            "id": 1,
+            "key": "baseUrl",
+            "value": "https://vcosta-fiap.online",
+            "isEnabled": true
+          },
+          {
+            "id": 2,
+            "key": "token",
+            "value": "",
+            "isEnabled": true
+          },
+          {
+            "id": 3,
+            "key": "serviceAuthKey",
+            "value": "",
+            "isEnabled": true
+          },
+          {
+            "id": 4,
+            "key": "itemId",
+            "value": "1",
+            "isEnabled": true
+          }
+        ]
+      },
+      "rank": "a2"
+    }
+  ]
+}

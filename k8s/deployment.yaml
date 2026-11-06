@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: estoque-service
+  namespace: tech-challenge
+  labels:
+    app: estoque-service
+    tags.datadoghq.com/service: estoque-service
+    tags.datadoghq.com/env: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: estoque-service
+  template:
+    metadata:
+      labels:
+        app: estoque-service
+        tags.datadoghq.com/service: estoque-service
+        tags.datadoghq.com/env: prod
+    spec:
+      serviceAccountName: estoque-service
+      initContainers:
+        - name: cloud-sql-proxy
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.25.4
+          restartPolicy: Always
+          args:
+            - "--private-ip"
+            - "--port=5432"
+            - "--health-check"
+            - "--http-address=0.0.0.0"
+            - "--http-port=9801"
+            - "$(CLOUD_SQL_CONNECTION_NAME)"
+          env:
+            - name: CLOUD_SQL_CONNECTION_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: estoque-service
+                  key: CLOUD_SQL_CONNECTION_NAME
+          startupProbe:
+            httpGet:
+              path: /startup
+              port: 9801
+            periodSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: 9801
+            periodSeconds: 10
+          securityContext:
+            runAsNonRoot: true
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+              ephemeral-storage: "64Mi"
+            limits:
+              memory: "256Mi"
+              ephemeral-storage: "128Mi"
+      containers:
+        - name: estoque-service
+          image: ${IMAGE}
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: estoque-service
+            - secretRef:
+                name: estoque-service
+          env:
+            - name: DD_VERSION
+              value: "${DD_VERSION}"
+          startupProbe:
+            httpGet:
+              path: /estoque/health
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /estoque/health
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /estoque/health
+              port: http
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+              ephemeral-storage: "128Mi"
+            limits:
+              memory: "768Mi"
+              ephemeral-storage: "256Mi"
+        - name: datadog-agent
+          image: gcr.io/datadoghq/agent:7.68.3
+          env:
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: estoque-service
+                  key: DD_API_KEY
+            - name: DD_SITE
+              valueFrom:
+                configMapKeyRef:
+                  name: estoque-service
+                  key: DD_SITE
+            - name: DD_APM_ENABLED
+              value: "true"
+            - name: DD_APM_NON_LOCAL_TRAFFIC
+              value: "false"
+            - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
+              value: "false"
+            - name: DD_LOGS_ENABLED
+              value: "false"
+            - name: DD_PROCESS_AGENT_ENABLED
+              value: "false"
+            - name: DD_SYSTEM_PROBE_ENABLED
+              value: "false"
+            - name: DD_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: DD_CONTAINER_EXCLUDE
+              value: "name:.*"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+              ephemeral-storage: "128Mi"
+            limits:
+              memory: "512Mi"
+              ephemeral-storage: "256Mi"

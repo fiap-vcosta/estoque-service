@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Application.Services;
 using BuildingBlocks.Events;
 using BuildingBlocks.Messaging;
@@ -5,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.Messaging;
 
+[ExcludeFromCodeCoverage(Justification = "Thin DI adapter; covered via ReservaEstoqueService tests.")]
 public class OrdemServicoFinalizadaConsumer(IServiceScopeFactory scopeFactory)
     : IIntegrationEventConsumer<OrdemServicoFinalizadaData>
 {

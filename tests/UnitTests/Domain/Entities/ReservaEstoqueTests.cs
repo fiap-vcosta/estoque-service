@@ -28,4 +28,42 @@ public class ReservaEstoqueTests
         // Act / Assert
         Assert.Throws<InvalidOperationException>(() => reserva.MarcarConsumida());
     }
+
+    [Fact]
+    public void MarcarReservada_FromReservada_Throws()
+    {
+        // Arrange
+        var reserva = ReservaEstoque.CriarReservada(1, DateTimeOffset.UtcNow, [
+            new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 1 }
+        ]);
+
+        // Act / Assert
+        Assert.Throws<InvalidOperationException>(() => reserva.MarcarReservada());
+    }
+
+    [Fact]
+    public void MarcarLiberada_FromConsumida_Throws()
+    {
+        // Arrange
+        var reserva = ReservaEstoque.CriarReservada(1, DateTimeOffset.UtcNow, [
+            new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 1 }
+        ]);
+        reserva.MarcarConsumida();
+
+        // Act / Assert
+        Assert.Throws<InvalidOperationException>(() => reserva.MarcarLiberada());
+    }
+
+    [Fact]
+    public void ReservaEstoqueItem_HoldsIds()
+    {
+        // Arrange / Act
+        var item = new ReservaEstoqueItem { Id = 3, ReservaEstoqueId = 9, ItemEstoqueId = 7, Quantidade = 2 };
+
+        // Assert
+        Assert.Equal(3, item.Id);
+        Assert.Equal(9, item.ReservaEstoqueId);
+        Assert.Equal(7, item.ItemEstoqueId);
+        Assert.Equal(2, item.Quantidade);
+    }
 }

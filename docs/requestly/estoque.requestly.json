@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "1.1.0",
-    "exportedAt": "2026-11-05T00:00:00.000Z",
+    "exportedAt": "2026-11-06T00:00:00.000Z",
     "exportedUsing": "Requestly API Client"
   },
   "records": [
@@ -240,114 +240,75 @@
         }
       },
       "rank": "a0"
-    },
-    {
-      "id": "e1000001-0000-4000-8000-000000000100",
-      "name": "Docker",
-      "type": "environment",
-      "parentId": null,
-      "deleted": false,
-      "data": {
-        "variables": [
-          {
-            "id": 1,
-            "key": "baseUrl",
-            "value": "http://localhost:8082",
-            "isEnabled": true
-          },
-          {
-            "id": 2,
-            "key": "token",
-            "value": "",
-            "isEnabled": true
-          },
-          {
-            "id": 3,
-            "key": "serviceAuthKey",
-            "value": "local-service-auth-key-change-me",
-            "isEnabled": true
-          },
-          {
-            "id": 4,
-            "key": "itemId",
-            "value": "1",
-            "isEnabled": true
-          }
-        ]
-      },
-      "rank": "a0"
-    },
-    {
-      "id": "e1000001-0000-4000-8000-000000000101",
-      "name": "Local",
-      "type": "environment",
-      "parentId": null,
-      "deleted": false,
-      "data": {
-        "variables": [
-          {
-            "id": 1,
-            "key": "baseUrl",
-            "value": "http://localhost:8082",
-            "isEnabled": true
-          },
-          {
-            "id": 2,
-            "key": "token",
-            "value": "",
-            "isEnabled": true
-          },
-          {
-            "id": 3,
-            "key": "serviceAuthKey",
-            "value": "local-service-auth-key-change-me",
-            "isEnabled": true
-          },
-          {
-            "id": 4,
-            "key": "itemId",
-            "value": "1",
-            "isEnabled": true
-          }
-        ]
-      },
-      "rank": "a1"
-    },
-    {
-      "id": "e1000001-0000-4000-8000-000000000102",
-      "name": "GCP-Gateway",
-      "type": "environment",
-      "parentId": null,
-      "deleted": false,
-      "data": {
-        "variables": [
-          {
-            "id": 1,
-            "key": "baseUrl",
-            "value": "https://vcosta-fiap.online",
-            "isEnabled": true
-          },
-          {
-            "id": 2,
-            "key": "token",
-            "value": "",
-            "isEnabled": true
-          },
-          {
-            "id": 3,
-            "key": "serviceAuthKey",
-            "value": "",
-            "isEnabled": true
-          },
-          {
-            "id": 4,
-            "key": "itemId",
-            "value": "1",
-            "isEnabled": true
-          }
-        ]
-      },
-      "rank": "a2"
     }
-  ]
+  ],
+  "environments": [
+    {
+      "id": "e1000001-0000-4000-8000-0000000000e1",
+      "name": "Docker",
+      "variables": {
+        "baseUrl": {
+          "type": "string",
+          "syncValue": "http://localhost:8082"
+        },
+        "token": {
+          "type": "secret",
+          "syncValue": ""
+        },
+        "serviceAuthKey": {
+          "type": "secret",
+          "syncValue": "local-service-auth-key-change-me"
+        },
+        "itemId": {
+          "type": "string",
+          "syncValue": "1"
+        }
+      }
+    },
+    {
+      "id": "e1000001-0000-4000-8000-0000000000e2",
+      "name": "Local",
+      "variables": {
+        "baseUrl": {
+          "type": "string",
+          "syncValue": "http://localhost:8082"
+        },
+        "token": {
+          "type": "secret",
+          "syncValue": ""
+        },
+        "serviceAuthKey": {
+          "type": "secret",
+          "syncValue": "local-service-auth-key-change-me"
+        },
+        "itemId": {
+          "type": "string",
+          "syncValue": "1"
+        }
+      }
+    },
+    {
+      "id": "e1000001-0000-4000-8000-0000000000e3",
+      "name": "GCP",
+      "variables": {
+        "baseUrl": {
+          "type": "string",
+          "syncValue": "https://vcosta-fiap.online"
+        },
+        "token": {
+          "type": "secret",
+          "syncValue": ""
+        },
+        "serviceAuthKey": {
+          "type": "secret",
+          "syncValue": ""
+        },
+        "itemId": {
+          "type": "string",
+          "syncValue": "1"
+        }
+      }
+    }
+  ],
+  "packages": []
 }

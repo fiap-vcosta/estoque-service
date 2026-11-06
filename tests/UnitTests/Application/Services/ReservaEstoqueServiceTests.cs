@@ -197,6 +197,78 @@ public class ReservaEstoqueServiceTests
     }
 
     [Fact]
+    public async Task ProcessarAprovacao_WhenReservaJaExiste_MarksProcessedWithoutPublish()
+    {
+        // Arrange
+        var aprovadaEm = DateTimeOffset.Parse("2026-10-25T15:10:00Z");
+        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(10, aprovadaEm, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ReservaEstoque.CriarReservada(10, aprovadaEm, [
+                new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 1 }
+            ]));
+
+        // Act
+        await Sut().ProcessarAprovacaoAsync(Guid.NewGuid(), new OrdemServicoAprovadaData
+        {
+            OrdemServicoId = 10,
+            AprovadaEm = aprovadaEm,
+            Itens = [new OrdemServicoAprovadaItem { ItemEstoqueId = 7, Quantidade = 1 }]
+        });
+
+        // Assert
+        Assert.Empty(_published);
+        _itens.Verify(g => g.GetEBloquearItensAsync(It.IsAny<IReadOnlyList<int>>(), It.IsAny<CancellationToken>()), Times.Never);
+        _eventos.Verify(e => e.AddAsync(It.IsAny<EventoProcessado>(), It.IsAny<CancellationToken>()), Times.Once);
+        _uow.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ProcessarAprovacao_WhenItemMissing_PublishesEmFalta()
+    {
+        // Arrange
+        _itens.Setup(g => g.GetEBloquearItensAsync(It.IsAny<IReadOnlyList<int>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync([]);
+        var data = new OrdemServicoAprovadaData
+        {
+            OrdemServicoId = 10,
+            AprovadaEm = DateTimeOffset.UtcNow,
+            Itens =
+            [
+                new OrdemServicoAprovadaItem { ItemEstoqueId = 7, Quantidade = 1 },
+                new OrdemServicoAprovadaItem { ItemEstoqueId = 8, Quantidade = 1 }
+            ]
+        };
+
+        // Act
+        await Sut().ProcessarAprovacaoAsync(Guid.NewGuid(), data);
+
+        // Assert
+        var emFalta = Assert.Single(_published.OfType<EstoqueEmFaltaData>());
+        Assert.All(emFalta.Itens, i => Assert.Equal(ItemEstoqueEventoStatus.EstoqueEmFalta, i.Status));
+        _reservas.Verify(r => r.AddAsync(It.Is<ReservaEstoque>(x => x.Status == ReservaEstoqueStatus.Pendente), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ReavaliarPendencias_WhenReservaGone_Skips()
+    {
+        // Arrange
+        var aprovadaEm = DateTimeOffset.UtcNow;
+        var pendente = ReservaEstoque.CriarPendente(10, aprovadaEm, [
+            new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 1 }
+        ]);
+        _reservas.Setup(r => r.GetPendentesPorItemOrdenadasAsync(7, It.IsAny<CancellationToken>()))
+            .ReturnsAsync([pendente]);
+        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(10, aprovadaEm, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ReservaEstoque?)null);
+
+        // Act
+        await Sut().ReavaliarPendenciasPorItemAsync(7);
+
+        // Assert
+        Assert.Empty(_published);
+        _itens.Verify(g => g.GetEBloquearItensAsync(It.IsAny<IReadOnlyList<int>>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
     public async Task ReavaliarPendencias_WhenNowFits_PublishesReservado_WithoutEmFalta()
     {
         // Arrange

@@ -62,4 +62,42 @@ public class CreateItemEstoqueRequestValidatorTests
         // Assert
         Assert.Contains(result.Errors, e => e.Contains("reservado"));
     }
+
+    [Fact]
+    public void Validate_WhenSaldoNegativo_HasError()
+    {
+        // Arrange / Act
+        var result = _sut.Validate(new CreateItemEstoqueRequest
+        {
+            Codigo = "A",
+            Nome = "N",
+            Tipo = ItemTipo.Peca,
+            UnidadeMedida = UnidadeMedida.Unidade,
+            PrecoVenda = 1,
+            Saldo = -1,
+            SaldoReservado = 0
+        });
+
+        // Assert
+        Assert.Contains(result.Errors, e => e.Contains("Saldo não pode ser negativo"));
+    }
+
+    [Fact]
+    public void Validate_WhenSaldoReservadoNegativo_HasError()
+    {
+        // Arrange / Act
+        var result = _sut.Validate(new CreateItemEstoqueRequest
+        {
+            Codigo = "A",
+            Nome = "N",
+            Tipo = ItemTipo.Peca,
+            UnidadeMedida = UnidadeMedida.Unidade,
+            PrecoVenda = 1,
+            Saldo = 1,
+            SaldoReservado = -1
+        });
+
+        // Assert
+        Assert.Contains(result.Errors, e => e.Contains("Saldo reservado não pode ser negativo"));
+    }
 }

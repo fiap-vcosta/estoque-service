@@ -45,10 +45,5 @@ public class ItemEstoqueCadastrosTests
         Assert.Equal(15, after!.Saldo);
     }
 
-    private sealed class ItemDto
-    {
-        public int Id { get; set; }
-        public decimal Saldo { get; set; }
-        public decimal SaldoReservado { get; set; }
-    }
+    private sealed record ItemDto(int Id, decimal Saldo);
 }

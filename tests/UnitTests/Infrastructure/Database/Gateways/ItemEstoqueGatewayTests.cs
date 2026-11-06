@@ -25,7 +25,11 @@ public class ItemEstoqueGatewayTests : IDisposable
         _context.SaveChanges();
     }
 
-    public void Dispose() => _context.Dispose();
+    public void Dispose()
+    {
+        _context.Dispose();
+        GC.SuppressFinalize(this);
+    }
 
     [Fact]
     public async Task GetByIdAsync_ReturnsItem()
@@ -35,7 +39,7 @@ public class ItemEstoqueGatewayTests : IDisposable
 
         // Assert
         Assert.NotNull(item);
-        Assert.Equal("A", item!.Codigo);
+        Assert.Equal("A", item.Codigo);
     }
 
     [Fact]

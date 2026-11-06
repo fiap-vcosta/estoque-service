@@ -22,6 +22,12 @@ public class ReservaEstoqueServiceTests
     {
         _uow.Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<CancellationToken, Task>>(), It.IsAny<CancellationToken>()))
             .Returns<Func<CancellationToken, Task>, CancellationToken>(async (action, ct) => await action(ct));
+        _uow.Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<CancellationToken, Task<(EstoqueReservadoData?, EstoqueEmFaltaData?)>>>(), It.IsAny<CancellationToken>()))
+            .Returns<Func<CancellationToken, Task<(EstoqueReservadoData?, EstoqueEmFaltaData?)>>, CancellationToken>(
+                async (action, ct) => await action(ct));
+        _uow.Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<CancellationToken, Task<EstoqueReservadoData?>>>(), It.IsAny<CancellationToken>()))
+            .Returns<Func<CancellationToken, Task<EstoqueReservadoData?>>, CancellationToken>(
+                async (action, ct) => await action(ct));
         _uow.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
         _publisher.Setup(p => p.PublishAsync(

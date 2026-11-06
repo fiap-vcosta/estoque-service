@@ -41,28 +41,23 @@ public class ReservaEstoqueService(
             return;
         }
 
-        EstoqueReservadoData? reservado = null;
-        EstoqueEmFaltaData? emFalta = null;
-
-        await unitOfWork.ExecuteInTransactionAsync(async ct =>
+        var (reservado, emFalta) = await unitOfWork.ExecuteInTransactionAsync(async ct =>
         {
             if (await eventoProcessadoGateway.ExisteEventIdAsync(eventId, ct)
                 || await eventoProcessadoGateway.ExisteChaveNegocioAsync(EventTypes.OrdemServicoAprovada, chave, ct))
             {
-                return;
+                return ((EstoqueReservadoData?)null, (EstoqueEmFaltaData?)null);
             }
 
             if (await ordemDescartadaGateway.ExisteAsync(data.OrdemServicoId, ct))
             {
                 await MarcarProcessadoAsync(eventId, EventTypes.OrdemServicoAprovada, chave, ct);
-                return;
+                return (null, null);
             }
 
             var resultado = await TentarReservarInternoAsync(data.OrdemServicoId, data.AprovadaEm, data.Itens, ct);
-            reservado = resultado.Reservado;
-            emFalta = resultado.EmFalta;
-
             await MarcarProcessadoAsync(eventId, EventTypes.OrdemServicoAprovada, chave, ct);
+            return resultado;
         }, cancellationToken);
 
         if (reservado is not null)
@@ -88,9 +83,7 @@ public class ReservaEstoqueService(
         var pendentes = await reservaEstoqueGateway.GetPendentesPorItemOrdenadasAsync(itemEstoqueId, cancellationToken);
         foreach (var pendente in pendentes)
         {
-            EstoqueReservadoData? reservado = null;
-
-            await unitOfWork.ExecuteInTransactionAsync(async ct =>
+            var reservado = await unitOfWork.ExecuteInTransactionAsync(async ct =>
             {
                 var atual = await reservaEstoqueGateway.GetByOrdemEAprovacaoAsync(
                     pendente.OrdemServicoId,
@@ -98,7 +91,7 @@ public class ReservaEstoqueService(
                     ct);
                 if (atual is null || atual.Status != ReservaEstoqueStatus.Pendente)
                 {
-                    return;
+                    return null;
                 }
 
                 var itensPedido = atual.Itens
@@ -115,7 +108,7 @@ public class ReservaEstoqueService(
 
                 if (!TodosCabem(itensPedido, bloqueados))
                 {
-                    return;
+                    return null;
                 }
 
                 foreach (var grupo in AgruparQuantidades(itensPedido))
@@ -127,7 +120,7 @@ public class ReservaEstoqueService(
                 atual.MarcarReservada();
                 await reservaEstoqueGateway.UpdateAsync(atual, ct);
 
-                reservado = new EstoqueReservadoData
+                return new EstoqueReservadoData
                 {
                     OrdemServicoId = atual.OrdemServicoId,
                     AprovadaEm = atual.AprovadaEm,
@@ -362,7 +355,7 @@ public class ReservaEstoqueService(
 
     private static bool TodosCabem(
         IReadOnlyList<OrdemServicoAprovadaItem> itens,
-        IReadOnlyDictionary<int, ItemEstoqueAggregateRoot> bloqueados)
+        Dictionary<int, ItemEstoqueAggregateRoot> bloqueados)
     {
         foreach (var grupo in AgruparQuantidades(itens))
         {

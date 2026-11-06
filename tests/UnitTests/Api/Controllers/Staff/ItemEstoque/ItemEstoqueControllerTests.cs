@@ -37,6 +37,22 @@ public class ItemEstoqueControllerTests
         PrecoVenda = 10, Saldo = 5, SaldoReservado = 0
     };
 
+    private static CreateItemEstoqueRequest EmptyCreate() => new()
+    {
+        Tipo = default,
+        UnidadeMedida = default,
+        PrecoVenda = default,
+        Saldo = default,
+        SaldoReservado = default
+    };
+
+    private static UpdateItemEstoqueRequest EmptyUpdate() => new()
+    {
+        Tipo = default,
+        UnidadeMedida = default,
+        PrecoVenda = default
+    };
+
     [Fact]
     public async Task Create_WhenInvalid_ReturnsBadRequest()
     {
@@ -46,7 +62,7 @@ public class ItemEstoqueControllerTests
         _create.Setup(v => v.Validate(It.IsAny<CreateItemEstoqueRequest>())).Returns(vr);
 
         // Act
-        var result = await _sut.Create(new CreateItemEstoqueRequest());
+        var result = await _sut.Create(EmptyCreate());
 
         // Assert
         Assert.IsType<BadRequestObjectResult>(result);
@@ -60,7 +76,16 @@ public class ItemEstoqueControllerTests
         _mediator.Setup(m => m.Send(It.IsAny<CreateItemEstoqueCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(Resp());
 
         // Act
-        var result = await _sut.Create(new CreateItemEstoqueRequest { Codigo = "A", Nome = "N", PrecoVenda = 1, Saldo = 1 });
+        var result = await _sut.Create(new CreateItemEstoqueRequest
+        {
+            Codigo = "A",
+            Nome = "N",
+            Tipo = ItemTipo.Peca,
+            UnidadeMedida = UnidadeMedida.Unidade,
+            PrecoVenda = 1,
+            Saldo = 1,
+            SaldoReservado = 0
+        });
 
         // Assert
         Assert.IsType<CreatedAtActionResult>(result);
@@ -97,7 +122,7 @@ public class ItemEstoqueControllerTests
     {
         // Arrange
         _mediator.Setup(m => m.Send(It.IsAny<GetAllItensEstoqueQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<ItemEstoqueResponse> { Resp() });
+            .ReturnsAsync([Resp()]);
 
         // Act
         var result = await _sut.GetAll();
@@ -115,7 +140,7 @@ public class ItemEstoqueControllerTests
         _update.Setup(v => v.Validate(It.IsAny<UpdateItemEstoqueRequest>())).Returns(vr);
 
         // Act
-        var result = await _sut.Update(1, new UpdateItemEstoqueRequest());
+        var result = await _sut.Update(1, EmptyUpdate());
 
         // Assert
         Assert.IsType<BadRequestObjectResult>(result);
@@ -129,7 +154,14 @@ public class ItemEstoqueControllerTests
         _mediator.Setup(m => m.Send(It.IsAny<UpdateItemEstoqueCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(Resp());
 
         // Act
-        var result = await _sut.Update(1, new UpdateItemEstoqueRequest { Codigo = "A", Nome = "N", PrecoVenda = 1 });
+        var result = await _sut.Update(1, new UpdateItemEstoqueRequest
+        {
+            Codigo = "A",
+            Nome = "N",
+            Tipo = ItemTipo.Peca,
+            UnidadeMedida = UnidadeMedida.Unidade,
+            PrecoVenda = 1
+        });
 
         // Assert
         Assert.IsType<OkObjectResult>(result);
@@ -157,7 +189,7 @@ public class ItemEstoqueControllerTests
         _entrada.Setup(v => v.Validate(It.IsAny<RegistrarEntradaEstoqueRequest>())).Returns(vr);
 
         // Act
-        var result = await _sut.RegistrarEntrada(1, new RegistrarEntradaEstoqueRequest());
+        var result = await _sut.RegistrarEntrada(1, new RegistrarEntradaEstoqueRequest { Quantidade = 0 });
 
         // Assert
         Assert.IsType<BadRequestObjectResult>(result);

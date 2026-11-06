@@ -1,4 +1,5 @@
 using Api.Controllers.Staff.ItemEstoque.CreateItemEstoque;
+using Domain.Entities;
 
 namespace UnitTests.Api.Controllers.Staff.ItemEstoque.CreateItemEstoque;
 
@@ -10,7 +11,14 @@ public class CreateItemEstoqueRequestValidatorTests
     public void Validate_WhenEmpty_HasErrors()
     {
         // Arrange / Act
-        var result = _sut.Validate(new CreateItemEstoqueRequest());
+        var result = _sut.Validate(new CreateItemEstoqueRequest
+        {
+            Tipo = default,
+            UnidadeMedida = default,
+            PrecoVenda = default,
+            Saldo = default,
+            SaldoReservado = default
+        });
 
         // Assert
         Assert.False(result.IsValid);
@@ -23,7 +31,13 @@ public class CreateItemEstoqueRequestValidatorTests
         // Arrange / Act
         var result = _sut.Validate(new CreateItemEstoqueRequest
         {
-            Codigo = "A", Nome = "N", PrecoVenda = 1, Saldo = 2, SaldoReservado = 1
+            Codigo = "A",
+            Nome = "N",
+            Tipo = ItemTipo.Peca,
+            UnidadeMedida = UnidadeMedida.Unidade,
+            PrecoVenda = 1,
+            Saldo = 2,
+            SaldoReservado = 1
         });
 
         // Assert
@@ -36,7 +50,13 @@ public class CreateItemEstoqueRequestValidatorTests
         // Arrange / Act
         var result = _sut.Validate(new CreateItemEstoqueRequest
         {
-            Codigo = "A", Nome = "N", PrecoVenda = 1, Saldo = 1, SaldoReservado = 2
+            Codigo = "A",
+            Nome = "N",
+            Tipo = ItemTipo.Peca,
+            UnidadeMedida = UnidadeMedida.Unidade,
+            PrecoVenda = 1,
+            Saldo = 1,
+            SaldoReservado = 2
         });
 
         // Assert

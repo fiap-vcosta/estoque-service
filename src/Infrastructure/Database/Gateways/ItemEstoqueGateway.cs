@@ -26,12 +26,9 @@ public class ItemEstoqueGateway(AppDbContext context) : IItemEstoqueGateway
             return [];
         }
 
-        var idsOrdenados = ids.Distinct().OrderBy(id => id).ToList();
-        var tokens = string.Join(", ", idsOrdenados.Select((_, index) => $"{{{index}}}"));
-        var query = $"SELECT * FROM \"ItensEstoque\" WHERE \"Id\" IN ({tokens}) FOR UPDATE";
-
+        var idsOrdenados = ids.Distinct().OrderBy(id => id).ToArray();
         return await context.ItensEstoque
-            .FromSqlRaw(query, idsOrdenados.Cast<object>().ToArray())
+            .FromSql($"SELECT * FROM \"ItensEstoque\" WHERE \"Id\" = ANY({idsOrdenados}) FOR UPDATE")
             .ToListAsync(cancellationToken);
     }
 

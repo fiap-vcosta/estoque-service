@@ -13,6 +13,7 @@ public enum UnidadeMedida
     Par,
     Litro,
     Kg,
+    // ReSharper disable once InconsistentNaming — unidade SI (requisitos).
     mL,
     Frasco
 }

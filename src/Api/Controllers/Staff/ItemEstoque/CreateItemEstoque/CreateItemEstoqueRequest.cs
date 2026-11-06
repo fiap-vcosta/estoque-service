@@ -5,10 +5,10 @@ namespace Api.Controllers.Staff.ItemEstoque.CreateItemEstoque;
 public class CreateItemEstoqueRequest
 {
     public string Codigo { get; init; } = string.Empty;
-    public ItemTipo Tipo { get; init; }
+    public required ItemTipo Tipo { get; init; }
     public string Nome { get; init; } = string.Empty;
-    public UnidadeMedida UnidadeMedida { get; init; }
-    public decimal PrecoVenda { get; init; }
-    public decimal Saldo { get; init; }
-    public decimal SaldoReservado { get; init; }
+    public required UnidadeMedida UnidadeMedida { get; init; }
+    public required decimal PrecoVenda { get; init; }
+    public required decimal Saldo { get; init; }
+    public required decimal SaldoReservado { get; init; }
 }

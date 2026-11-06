@@ -37,10 +37,10 @@ public class UnitOfWorkTests
         var uow = new UnitOfWork(context);
 
         // Act
-        await uow.ExecuteInTransactionAsync(async ct =>
+        await uow.ExecuteInTransactionAsync(_ =>
         {
             context.OrdensDescartadas.Add(new OrdemDescartada { OrdemServicoId = 2, DescartadaEm = DateTimeOffset.UtcNow });
-            await Task.CompletedTask;
+            return Task.CompletedTask;
         });
 
         // Assert

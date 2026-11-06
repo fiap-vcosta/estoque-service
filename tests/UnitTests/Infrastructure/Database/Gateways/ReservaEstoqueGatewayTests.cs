@@ -20,7 +20,11 @@ public class ReservaEstoqueGatewayTests : IDisposable
         _gateway = new ReservaEstoqueGateway(_context);
     }
 
-    public void Dispose() => _context.Dispose();
+    public void Dispose()
+    {
+        _context.Dispose();
+        GC.SuppressFinalize(this);
+    }
 
     [Fact]
     public async Task AddAndQuery_Work()

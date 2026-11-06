@@ -1,4 +1,5 @@
 using Api.Controllers.Staff.ItemEstoque.UpdateItemEstoque;
+using Domain.Entities;
 
 namespace UnitTests.Api.Controllers.Staff.ItemEstoque.UpdateItemEstoque;
 
@@ -8,7 +9,12 @@ public class UpdateItemEstoqueRequestValidatorTests
     public void Validate_WhenEmpty_HasErrors()
     {
         // Arrange / Act
-        var result = new UpdateItemEstoqueRequestValidator().Validate(new UpdateItemEstoqueRequest());
+        var result = new UpdateItemEstoqueRequestValidator().Validate(new UpdateItemEstoqueRequest
+        {
+            Tipo = default,
+            UnidadeMedida = default,
+            PrecoVenda = default
+        });
 
         // Assert
         Assert.False(result.IsValid);
@@ -20,7 +26,11 @@ public class UpdateItemEstoqueRequestValidatorTests
         // Arrange / Act
         var result = new UpdateItemEstoqueRequestValidator().Validate(new UpdateItemEstoqueRequest
         {
-            Codigo = "A", Nome = "N", PrecoVenda = 1
+            Codigo = "A",
+            Nome = "N",
+            Tipo = ItemTipo.Peca,
+            UnidadeMedida = UnidadeMedida.Unidade,
+            PrecoVenda = 1
         });
 
         // Assert

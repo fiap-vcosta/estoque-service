@@ -9,12 +9,24 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
         Func<CancellationToken, Task> action,
         CancellationToken cancellationToken = default)
     {
+        await ExecuteInTransactionAsync(async ct =>
+        {
+            await action(ct);
+            return true;
+        }, cancellationToken);
+    }
+
+    public async Task<T> ExecuteInTransactionAsync<T>(
+        Func<CancellationToken, Task<T>> action,
+        CancellationToken cancellationToken = default)
+    {
         await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
-            await action(cancellationToken);
+            var result = await action(cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
+            return result;
         }
         catch
         {

@@ -97,9 +97,10 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"codigo\": \"FILTRO\",\n  \"tipo\": \"Peca\",\n  \"nome\": \"Filtro de oleo\",\n  \"unidadeMedida\": \"Unidade\",\n  \"precoVenda\": 45.9,\n  \"saldo\": 10,\n  \"saldoReservado\": 0\n}"
+            "raw": "{\n  \"codigo\": \"FILTRO\",\n  \"tipo\": \"Peca\",\n  \"nome\": \"Filtro de oleo\",\n  \"unidadeMedida\": \"Unidade\",\n  \"precoVenda\": 45.9,\n  \"saldo\": 10,\n  \"saldoReservado\": 0\n}",
+            "rawContentType": "application/json"
           },
-          "contentType": "application/json"
+          "contentType": "raw"
         },
         "auth": {
           "type": "inherit"
@@ -181,9 +182,10 @@
           "pathVariables": [],
           "body": {
             "contentType": "raw",
-            "raw": "{\n  \"quantidade\": 5\n}"
+            "raw": "{\n  \"quantidade\": 5\n}",
+            "rawContentType": "application/json"
           },
-          "contentType": "application/json"
+          "contentType": "raw"
         },
         "auth": {
           "type": "inherit"

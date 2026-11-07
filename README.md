@@ -42,7 +42,7 @@ dotnet test tests/IntegrationTests/IntegrationTests.csproj -c Release
 
 ## Service auth (malha)
 
-`ServiceAuth__Key` / `X-Service-Key` vem do org secret `SERVICE_AUTH_KEY` (modelo 1 compartilhado entre os serviços).
+`ServiceAuth__Key` / `X-Service-Key` vem do org secret `SERVICE_AUTH_KEY` (mesmo valor em todos os serviços).
 
 ## Deploy (GCP)
 

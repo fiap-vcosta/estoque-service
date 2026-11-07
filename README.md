@@ -40,6 +40,10 @@ dotnet test tests/UnitTests/UnitTests.csproj -c Release \
 dotnet test tests/IntegrationTests/IntegrationTests.csproj -c Release
 ```
 
+## Service auth (malha)
+
+`ServiceAuth__Key` / `X-Service-Key` vem do org secret `SERVICE_AUTH_KEY` (modelo 1 compartilhado entre os serviços).
+
 ## Deploy (GCP)
 
 `tf-apply` / `deploy` manuais (`workflow_dispatch`). Smoke: `/estoque/health` + CRUD staff via Gateway; workers com publish manual nos tópicos após o `demo-up`.

@@ -1,12 +1,12 @@
 {
-  "title": "Tech Challenge \u2014 estoque-service (demo)",
-  "description": "Dashboard do servi\u00e7o `estoque-service` na janela de demo (APM + logs). Dashboard geral da Saga: e2e/docs/datadog/.",
+  "title": "[estoque] dashboard",
+  "description": "Dashboard do serviço `estoque-service` na janela GCP (APM + logs). Dashboard geral da Saga: e2e/docs/datadog/.",
   "layout_type": "ordered",
   "reflow_type": "auto",
   "widgets": [
     {
       "definition": {
-        "title": "Lat\u00eancia p95 (APM)",
+        "title": "Latência p95 (APM)",
         "type": "timeseries",
         "requests": [
           {
@@ -42,7 +42,7 @@
     },
     {
       "definition": {
-        "title": "Runtime .NET \u2014 CPU %",
+        "title": "Runtime .NET — CPU %",
         "type": "timeseries",
         "requests": [
           {
@@ -54,7 +54,7 @@
     },
     {
       "definition": {
-        "title": "Runtime .NET \u2014 mem\u00f3ria committed",
+        "title": "Runtime .NET — memória committed",
         "type": "timeseries",
         "requests": [
           {

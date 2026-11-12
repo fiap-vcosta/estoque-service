@@ -93,8 +93,8 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Domain.Entities.OrdemDescartada", b =>
                 {
-                    b.Property<int>("OrdemServicoId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("OrdemServicoId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("DescartadaEm")
                         .HasColumnType("timestamp with time zone");
@@ -115,8 +115,8 @@ namespace Infrastructure.Database.Migrations
                     b.Property<DateTimeOffset>("AprovadaEm")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("OrdemServicoId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("OrdemServicoId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Status")
                         .IsRequired()

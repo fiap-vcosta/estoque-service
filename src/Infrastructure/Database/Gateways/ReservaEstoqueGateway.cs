@@ -7,7 +7,7 @@ namespace Infrastructure.Database.Gateways;
 public class ReservaEstoqueGateway(AppDbContext context) : IReservaEstoqueGateway
 {
     public async Task<ReservaEstoque?> GetByOrdemEAprovacaoAsync(
-        int ordemServicoId,
+        Guid ordemServicoId,
         DateTimeOffset aprovadaEm,
         CancellationToken cancellationToken = default) =>
         await context.ReservasEstoque
@@ -17,7 +17,7 @@ public class ReservaEstoqueGateway(AppDbContext context) : IReservaEstoqueGatewa
                 cancellationToken);
 
     public async Task<ReservaEstoque?> GetReservadaByOrdemServicoIdAsync(
-        int ordemServicoId,
+        Guid ordemServicoId,
         CancellationToken cancellationToken = default) =>
         await context.ReservasEstoque
             .Include(r => r.Itens)
@@ -26,7 +26,7 @@ public class ReservaEstoqueGateway(AppDbContext context) : IReservaEstoqueGatewa
                 cancellationToken);
 
     public async Task<ReservaEstoque?> GetAtivaByOrdemServicoIdAsync(
-        int ordemServicoId,
+        Guid ordemServicoId,
         CancellationToken cancellationToken = default) =>
         await context.ReservasEstoque
             .Include(r => r.Itens)

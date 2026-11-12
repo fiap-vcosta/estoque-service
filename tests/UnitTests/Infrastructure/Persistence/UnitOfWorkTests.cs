@@ -20,7 +20,7 @@ public class UnitOfWorkTests
         // Arrange
         await using var context = new AppDbContext(Options());
         var uow = new UnitOfWork(context);
-        context.OrdensDescartadas.Add(new OrdemDescartada { OrdemServicoId = 1, DescartadaEm = DateTimeOffset.UtcNow });
+        context.OrdensDescartadas.Add(new OrdemDescartada { OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000001"), DescartadaEm = DateTimeOffset.UtcNow });
 
         // Act
         await uow.SaveChangesAsync();
@@ -39,7 +39,7 @@ public class UnitOfWorkTests
         // Act
         await uow.ExecuteInTransactionAsync(_ =>
         {
-            context.OrdensDescartadas.Add(new OrdemDescartada { OrdemServicoId = 2, DescartadaEm = DateTimeOffset.UtcNow });
+            context.OrdensDescartadas.Add(new OrdemDescartada { OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000002"), DescartadaEm = DateTimeOffset.UtcNow });
             return Task.CompletedTask;
         });
 

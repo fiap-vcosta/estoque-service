@@ -8,7 +8,7 @@ public class ReservaEstoqueTests
     public void MarcarReservada_FromPendente_Works()
     {
         // Arrange
-        var reserva = ReservaEstoque.CriarPendente(1, DateTimeOffset.UtcNow, [
+        var reserva = ReservaEstoque.CriarPendente(Guid.Parse("00000000-0000-0000-0000-000000000001"), DateTimeOffset.UtcNow, [
             new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 2 }
         ]);
 
@@ -23,7 +23,7 @@ public class ReservaEstoqueTests
     public void MarcarConsumida_FromPendente_Throws()
     {
         // Arrange
-        var reserva = ReservaEstoque.CriarPendente(1, DateTimeOffset.UtcNow, []);
+        var reserva = ReservaEstoque.CriarPendente(Guid.Parse("00000000-0000-0000-0000-000000000001"), DateTimeOffset.UtcNow, []);
 
         // Act / Assert
         Assert.Throws<InvalidOperationException>(() => reserva.MarcarConsumida());
@@ -33,7 +33,7 @@ public class ReservaEstoqueTests
     public void MarcarReservada_FromReservada_Throws()
     {
         // Arrange
-        var reserva = ReservaEstoque.CriarReservada(1, DateTimeOffset.UtcNow, [
+        var reserva = ReservaEstoque.CriarReservada(Guid.Parse("00000000-0000-0000-0000-000000000001"), DateTimeOffset.UtcNow, [
             new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 1 }
         ]);
 
@@ -45,7 +45,7 @@ public class ReservaEstoqueTests
     public void MarcarLiberada_FromConsumida_Throws()
     {
         // Arrange
-        var reserva = ReservaEstoque.CriarReservada(1, DateTimeOffset.UtcNow, [
+        var reserva = ReservaEstoque.CriarReservada(Guid.Parse("00000000-0000-0000-0000-000000000001"), DateTimeOffset.UtcNow, [
             new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 1 }
         ]);
         reserva.MarcarConsumida();

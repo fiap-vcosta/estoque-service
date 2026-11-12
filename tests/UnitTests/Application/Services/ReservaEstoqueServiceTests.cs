@@ -47,8 +47,8 @@ public class ReservaEstoqueServiceTests
 
         _eventos.Setup(e => e.ExisteEventIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
         _eventos.Setup(e => e.ExisteChaveNegocioAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
-        _descartes.Setup(d => d.ExisteAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
-        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+        _descartes.Setup(d => d.ExisteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((ReservaEstoque?)null);
     }
 
@@ -73,7 +73,7 @@ public class ReservaEstoqueServiceTests
         var aprovadaEm = DateTimeOffset.Parse("2026-10-25T15:10:00Z");
         var data = new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 10,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000010"),
             AprovadaEm = aprovadaEm,
             Itens = [new OrdemServicoAprovadaItem { ItemEstoqueId = 7, Quantidade = 2 }]
         };
@@ -97,7 +97,7 @@ public class ReservaEstoqueServiceTests
             .ReturnsAsync([item]);
         var data = new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 10,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000010"),
             AprovadaEm = DateTimeOffset.UtcNow,
             Itens =
             [
@@ -124,7 +124,7 @@ public class ReservaEstoqueServiceTests
             .ReturnsAsync([item]);
         var data = new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 10,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000010"),
             AprovadaEm = DateTimeOffset.UtcNow,
             Itens = [new OrdemServicoAprovadaItem { ItemEstoqueId = 7, Quantidade = 5 }]
         };
@@ -147,7 +147,7 @@ public class ReservaEstoqueServiceTests
         // Act
         await Sut().ProcessarAprovacaoAsync(Guid.NewGuid(), new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 1,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
             AprovadaEm = DateTimeOffset.UtcNow,
             Itens = []
         });
@@ -167,7 +167,7 @@ public class ReservaEstoqueServiceTests
         // Act
         await Sut().ProcessarAprovacaoAsync(Guid.NewGuid(), new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 1,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000001"),
             AprovadaEm = DateTimeOffset.UtcNow,
             Itens = []
         });
@@ -180,12 +180,12 @@ public class ReservaEstoqueServiceTests
     public async Task ProcessarAprovacao_RF04_1_WhenOrdemDescartada_DoesNotReserve()
     {
         // Arrange
-        _descartes.Setup(d => d.ExisteAsync(10, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        _descartes.Setup(d => d.ExisteAsync(Guid.Parse("00000000-0000-0000-0000-000000000010"), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
         // Act
         await Sut().ProcessarAprovacaoAsync(Guid.NewGuid(), new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 10,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000010"),
             AprovadaEm = DateTimeOffset.UtcNow,
             Itens = [new OrdemServicoAprovadaItem { ItemEstoqueId = 7, Quantidade = 1 }]
         });
@@ -201,15 +201,15 @@ public class ReservaEstoqueServiceTests
     {
         // Arrange
         var aprovadaEm = DateTimeOffset.Parse("2026-10-25T15:10:00Z");
-        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(10, aprovadaEm, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(ReservaEstoque.CriarReservada(10, aprovadaEm, [
+        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(Guid.Parse("00000000-0000-0000-0000-000000000010"), aprovadaEm, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ReservaEstoque.CriarReservada(Guid.Parse("00000000-0000-0000-0000-000000000010"), aprovadaEm, [
                 new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 1 }
             ]));
 
         // Act
         await Sut().ProcessarAprovacaoAsync(Guid.NewGuid(), new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 10,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000010"),
             AprovadaEm = aprovadaEm,
             Itens = [new OrdemServicoAprovadaItem { ItemEstoqueId = 7, Quantidade = 1 }]
         });
@@ -229,7 +229,7 @@ public class ReservaEstoqueServiceTests
             .ReturnsAsync([]);
         var data = new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 10,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000010"),
             AprovadaEm = DateTimeOffset.UtcNow,
             Itens =
             [
@@ -252,12 +252,12 @@ public class ReservaEstoqueServiceTests
     {
         // Arrange
         var aprovadaEm = DateTimeOffset.UtcNow;
-        var pendente = ReservaEstoque.CriarPendente(10, aprovadaEm, [
+        var pendente = ReservaEstoque.CriarPendente(Guid.Parse("00000000-0000-0000-0000-000000000010"), aprovadaEm, [
             new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 1 }
         ]);
         _reservas.Setup(r => r.GetPendentesPorItemOrdenadasAsync(7, It.IsAny<CancellationToken>()))
             .ReturnsAsync([pendente]);
-        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(10, aprovadaEm, It.IsAny<CancellationToken>()))
+        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(Guid.Parse("00000000-0000-0000-0000-000000000010"), aprovadaEm, It.IsAny<CancellationToken>()))
             .ReturnsAsync((ReservaEstoque?)null);
 
         // Act
@@ -274,14 +274,14 @@ public class ReservaEstoqueServiceTests
         // Arrange
         var item = Item(7, 10);
         var aprovadaEm = DateTimeOffset.Parse("2026-10-25T15:10:00Z");
-        var pendente = ReservaEstoque.CriarPendente(10, aprovadaEm, [
+        var pendente = ReservaEstoque.CriarPendente(Guid.Parse("00000000-0000-0000-0000-000000000010"), aprovadaEm, [
             new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 2 }
         ]);
         pendente.Id = 1;
 
         _reservas.Setup(r => r.GetPendentesPorItemOrdenadasAsync(7, It.IsAny<CancellationToken>()))
             .ReturnsAsync([pendente]);
-        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(10, aprovadaEm, It.IsAny<CancellationToken>()))
+        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(Guid.Parse("00000000-0000-0000-0000-000000000010"), aprovadaEm, It.IsAny<CancellationToken>()))
             .ReturnsAsync(pendente);
         _itens.Setup(g => g.GetEBloquearItensAsync(It.IsAny<IReadOnlyList<int>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync([item]);
@@ -302,12 +302,12 @@ public class ReservaEstoqueServiceTests
         // Arrange
         var item = Item(7, 1);
         var aprovadaEm = DateTimeOffset.UtcNow;
-        var pendente = ReservaEstoque.CriarPendente(10, aprovadaEm, [
+        var pendente = ReservaEstoque.CriarPendente(Guid.Parse("00000000-0000-0000-0000-000000000010"), aprovadaEm, [
             new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 5 }
         ]);
         _reservas.Setup(r => r.GetPendentesPorItemOrdenadasAsync(7, It.IsAny<CancellationToken>()))
             .ReturnsAsync([pendente]);
-        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(10, aprovadaEm, It.IsAny<CancellationToken>()))
+        _reservas.Setup(r => r.GetByOrdemEAprovacaoAsync(Guid.Parse("00000000-0000-0000-0000-000000000010"), aprovadaEm, It.IsAny<CancellationToken>()))
             .ReturnsAsync(pendente);
         _itens.Setup(g => g.GetEBloquearItensAsync(It.IsAny<IReadOnlyList<int>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync([item]);
@@ -325,16 +325,16 @@ public class ReservaEstoqueServiceTests
     {
         // Arrange
         var item = Item(7, 10, 2);
-        var reserva = ReservaEstoque.CriarReservada(10, DateTimeOffset.UtcNow, [
+        var reserva = ReservaEstoque.CriarReservada(Guid.Parse("00000000-0000-0000-0000-000000000010"), DateTimeOffset.UtcNow, [
             new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 2 }
         ]);
-        _reservas.Setup(r => r.GetReservadaByOrdemServicoIdAsync(10, It.IsAny<CancellationToken>()))
+        _reservas.Setup(r => r.GetReservadaByOrdemServicoIdAsync(Guid.Parse("00000000-0000-0000-0000-000000000010"), It.IsAny<CancellationToken>()))
             .ReturnsAsync(reserva);
         _itens.Setup(g => g.GetEBloquearItensAsync(It.IsAny<IReadOnlyList<int>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync([item]);
 
         // Act
-        await Sut().ProcessarFinalizacaoAsync(Guid.NewGuid(), new OrdemServicoFinalizadaData { OrdemServicoId = 10 });
+        await Sut().ProcessarFinalizacaoAsync(Guid.NewGuid(), new OrdemServicoFinalizadaData { OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000010") });
 
         // Assert
         Assert.Equal(8, item.Saldo);
@@ -347,36 +347,36 @@ public class ReservaEstoqueServiceTests
     {
         // Arrange
         var item = Item(7, 10, 2);
-        var reserva = ReservaEstoque.CriarReservada(10, DateTimeOffset.UtcNow, [
+        var reserva = ReservaEstoque.CriarReservada(Guid.Parse("00000000-0000-0000-0000-000000000010"), DateTimeOffset.UtcNow, [
             new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 2 }
         ]);
-        _reservas.Setup(r => r.GetAtivaByOrdemServicoIdAsync(10, It.IsAny<CancellationToken>()))
+        _reservas.Setup(r => r.GetAtivaByOrdemServicoIdAsync(Guid.Parse("00000000-0000-0000-0000-000000000010"), It.IsAny<CancellationToken>()))
             .ReturnsAsync(reserva);
         _itens.Setup(g => g.GetEBloquearItensAsync(It.IsAny<IReadOnlyList<int>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync([item]);
 
         // Act
-        await Sut().ProcessarDescarteAsync(Guid.NewGuid(), new OrdemServicoDescartadaData { OrdemServicoId = 10 });
+        await Sut().ProcessarDescarteAsync(Guid.NewGuid(), new OrdemServicoDescartadaData { OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000010") });
 
         // Assert
         Assert.Equal(10, item.Saldo);
         Assert.Equal(0, item.SaldoReservado);
         Assert.Equal(ReservaEstoqueStatus.Liberada, reserva.Status);
-        _descartes.Verify(d => d.AddAsync(It.Is<OrdemDescartada>(o => o.OrdemServicoId == 10), It.IsAny<CancellationToken>()), Times.Once);
+        _descartes.Verify(d => d.AddAsync(It.Is<OrdemDescartada>(o => o.OrdemServicoId == Guid.Parse("00000000-0000-0000-0000-000000000010")), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task ProcessarDescarte_WhenPendente_RemovesFromQueueWithoutTouchingSaldo()
     {
         // Arrange
-        var reserva = ReservaEstoque.CriarPendente(10, DateTimeOffset.UtcNow, [
+        var reserva = ReservaEstoque.CriarPendente(Guid.Parse("00000000-0000-0000-0000-000000000010"), DateTimeOffset.UtcNow, [
             new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 2 }
         ]);
-        _reservas.Setup(r => r.GetAtivaByOrdemServicoIdAsync(10, It.IsAny<CancellationToken>()))
+        _reservas.Setup(r => r.GetAtivaByOrdemServicoIdAsync(Guid.Parse("00000000-0000-0000-0000-000000000010"), It.IsAny<CancellationToken>()))
             .ReturnsAsync(reserva);
 
         // Act
-        await Sut().ProcessarDescarteAsync(Guid.NewGuid(), new OrdemServicoDescartadaData { OrdemServicoId = 10 });
+        await Sut().ProcessarDescarteAsync(Guid.NewGuid(), new OrdemServicoDescartadaData { OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000010") });
 
         // Assert
         Assert.Equal(ReservaEstoqueStatus.Liberada, reserva.Status);
@@ -390,9 +390,9 @@ public class ReservaEstoqueServiceTests
         _eventos.Setup(e => e.ExisteEventIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
         // Act
-        await Sut().ProcessarFinalizacaoAsync(Guid.NewGuid(), new OrdemServicoFinalizadaData { OrdemServicoId = 10 });
+        await Sut().ProcessarFinalizacaoAsync(Guid.NewGuid(), new OrdemServicoFinalizadaData { OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000010") });
 
         // Assert
-        _reservas.Verify(r => r.GetReservadaByOrdemServicoIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+        _reservas.Verify(r => r.GetReservadaByOrdemServicoIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

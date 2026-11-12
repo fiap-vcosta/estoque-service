@@ -241,7 +241,7 @@ public class ReservaEstoqueService(
     }
 
     private async Task<(EstoqueReservadoData? Reservado, EstoqueEmFaltaData? EmFalta)> TentarReservarInternoAsync(
-        int ordemServicoId,
+        Guid ordemServicoId,
         DateTimeOffset aprovadaEm,
         IReadOnlyList<OrdemServicoAprovadaItem> itens,
         CancellationToken cancellationToken)
@@ -393,6 +393,6 @@ public class ReservaEstoqueService(
         }, cancellationToken);
     }
 
-    public static string ChaveAprovacao(int ordemServicoId, DateTimeOffset aprovadaEm) =>
+    public static string ChaveAprovacao(Guid ordemServicoId, DateTimeOffset aprovadaEm) =>
         $"{ordemServicoId}|{aprovadaEm.UtcDateTime:O}";
 }

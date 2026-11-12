@@ -31,7 +31,7 @@ public class ReservaEstoqueIntegrationTests
         // Act
         await service.ProcessarAprovacaoAsync(Guid.NewGuid(), new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 100,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000100"),
             AprovadaEm = aprovadaEm,
             Itens = [new OrdemServicoAprovadaItem { ItemEstoqueId = itemId, Quantidade = 3 }]
         });
@@ -41,11 +41,11 @@ public class ReservaEstoqueIntegrationTests
         Assert.Equal(3, item!.SaldoReservado);
         Assert.NotEmpty(transport.GetPublished(TopicIds.EstoqueReservado));
 
-        await service.ProcessarFinalizacaoAsync(Guid.NewGuid(), new OrdemServicoFinalizadaData { OrdemServicoId = 100 });
+        await service.ProcessarFinalizacaoAsync(Guid.NewGuid(), new OrdemServicoFinalizadaData { OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000100") });
         await db.Entry(item).ReloadAsync();
         Assert.Equal(7, item.Saldo);
         Assert.Equal(0, item.SaldoReservado);
-        Assert.Equal(ReservaEstoqueStatus.Consumida, db.ReservasEstoque.Single(r => r.OrdemServicoId == 100).Status);
+        Assert.Equal(ReservaEstoqueStatus.Consumida, db.ReservasEstoque.Single(r => r.OrdemServicoId == Guid.Parse("00000000-0000-0000-0000-000000000100")).Status);
         _ = publisher;
     }
 
@@ -62,12 +62,12 @@ public class ReservaEstoqueIntegrationTests
 
         await service.ProcessarAprovacaoAsync(Guid.NewGuid(), new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 200,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000200"),
             AprovadaEm = aprovadaEm,
             Itens = [new OrdemServicoAprovadaItem { ItemEstoqueId = itemId, Quantidade = 5 }]
         });
         Assert.NotEmpty(transport.GetPublished(TopicIds.EstoqueEmFalta));
-        Assert.Equal(ReservaEstoqueStatus.Pendente, db.ReservasEstoque.Single(r => r.OrdemServicoId == 200).Status);
+        Assert.Equal(ReservaEstoqueStatus.Pendente, db.ReservasEstoque.Single(r => r.OrdemServicoId == Guid.Parse("00000000-0000-0000-0000-000000000200")).Status);
 
         // Act — entrada via HTTP (reavalia)
         var client = _factory.CreateClient();
@@ -76,8 +76,8 @@ public class ReservaEstoqueIntegrationTests
         entrada.EnsureSuccessStatusCode();
 
         // Assert
-        await db.Entry(db.ReservasEstoque.Single(r => r.OrdemServicoId == 200)).ReloadAsync();
-        Assert.Equal(ReservaEstoqueStatus.Reservada, db.ReservasEstoque.Single(r => r.OrdemServicoId == 200).Status);
+        await db.Entry(db.ReservasEstoque.Single(r => r.OrdemServicoId == Guid.Parse("00000000-0000-0000-0000-000000000200"))).ReloadAsync();
+        Assert.Equal(ReservaEstoqueStatus.Reservada, db.ReservasEstoque.Single(r => r.OrdemServicoId == Guid.Parse("00000000-0000-0000-0000-000000000200")).Status);
         Assert.NotEmpty(transport.GetPublished(TopicIds.EstoqueReservado));
     }
 
@@ -93,19 +93,19 @@ public class ReservaEstoqueIntegrationTests
 
         await service.ProcessarAprovacaoAsync(Guid.NewGuid(), new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 300,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000300"),
             AprovadaEm = aprovadaEm,
             Itens = [new OrdemServicoAprovadaItem { ItemEstoqueId = itemId, Quantidade = 2 }]
         });
 
-        await service.ProcessarDescarteAsync(Guid.NewGuid(), new OrdemServicoDescartadaData { OrdemServicoId = 300 });
+        await service.ProcessarDescarteAsync(Guid.NewGuid(), new OrdemServicoDescartadaData { OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000300") });
         var item = await db.ItensEstoque.FindAsync(itemId);
         Assert.Equal(0, item!.SaldoReservado);
 
         // Act — RF04.1
         await service.ProcessarAprovacaoAsync(Guid.NewGuid(), new OrdemServicoAprovadaData
         {
-            OrdemServicoId = 300,
+            OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000300"),
             AprovadaEm = DateTimeOffset.Parse("2026-10-25T18:00:00Z"),
             Itens = [new OrdemServicoAprovadaItem { ItemEstoqueId = itemId, Quantidade = 1 }]
         });
@@ -113,7 +113,7 @@ public class ReservaEstoqueIntegrationTests
         // Assert
         await db.Entry(item).ReloadAsync();
         Assert.Equal(0, item.SaldoReservado);
-        Assert.True(db.OrdensDescartadas.Any(o => o.OrdemServicoId == 300));
+        Assert.True(db.OrdensDescartadas.Any(o => o.OrdemServicoId == Guid.Parse("00000000-0000-0000-0000-000000000300")));
     }
 
     private async Task<int> CreateItemAsync(string codigo, decimal saldo)

@@ -20,11 +20,11 @@ public class OrdemDescartadaGatewayTests
         var uow = new UnitOfWork(context);
 
         // Act
-        Assert.False(await gateway.ExisteAsync(10));
-        await gateway.AddAsync(new OrdemDescartada { OrdemServicoId = 10, DescartadaEm = DateTimeOffset.UtcNow });
+        Assert.False(await gateway.ExisteAsync(Guid.Parse("00000000-0000-0000-0000-000000000010")));
+        await gateway.AddAsync(new OrdemDescartada { OrdemServicoId = Guid.Parse("00000000-0000-0000-0000-000000000010"), DescartadaEm = DateTimeOffset.UtcNow });
         await uow.SaveChangesAsync();
 
         // Assert
-        Assert.True(await gateway.ExisteAsync(10));
+        Assert.True(await gateway.ExisteAsync(Guid.Parse("00000000-0000-0000-0000-000000000010")));
     }
 }

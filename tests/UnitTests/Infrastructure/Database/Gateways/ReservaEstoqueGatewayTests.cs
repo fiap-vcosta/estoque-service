@@ -30,15 +30,15 @@ public class ReservaEstoqueGatewayTests : IDisposable
     public async Task AddAndQuery_Work()
     {
         // Arrange
-        var reserva = ReservaEstoque.CriarPendente(10, _aprovadaEm, [
+        var reserva = ReservaEstoque.CriarPendente(Guid.Parse("00000000-0000-0000-0000-000000000010"), _aprovadaEm, [
             new ReservaEstoqueItem { ItemEstoqueId = 7, Quantidade = 2 }
         ]);
 
         // Act
         await _gateway.AddAsync(reserva);
-        var byKey = await _gateway.GetByOrdemEAprovacaoAsync(10, _aprovadaEm);
+        var byKey = await _gateway.GetByOrdemEAprovacaoAsync(Guid.Parse("00000000-0000-0000-0000-000000000010"), _aprovadaEm);
         var pendentes = await _gateway.GetPendentesPorItemOrdenadasAsync(7);
-        var ativa = await _gateway.GetAtivaByOrdemServicoIdAsync(10);
+        var ativa = await _gateway.GetAtivaByOrdemServicoIdAsync(Guid.Parse("00000000-0000-0000-0000-000000000010"));
 
         // Assert
         Assert.NotNull(byKey);
@@ -47,7 +47,7 @@ public class ReservaEstoqueGatewayTests : IDisposable
 
         reserva.MarcarReservada();
         await _gateway.UpdateAsync(reserva);
-        var reservada = await _gateway.GetReservadaByOrdemServicoIdAsync(10);
+        var reservada = await _gateway.GetReservadaByOrdemServicoIdAsync(Guid.Parse("00000000-0000-0000-0000-000000000010"));
         Assert.NotNull(reservada);
     }
 
@@ -55,9 +55,9 @@ public class ReservaEstoqueGatewayTests : IDisposable
     public async Task Queries_WhenEmpty_ReturnNullOrEmpty()
     {
         // Arrange / Act
-        var byKey = await _gateway.GetByOrdemEAprovacaoAsync(1, _aprovadaEm);
-        var reservada = await _gateway.GetReservadaByOrdemServicoIdAsync(1);
-        var ativa = await _gateway.GetAtivaByOrdemServicoIdAsync(1);
+        var byKey = await _gateway.GetByOrdemEAprovacaoAsync(Guid.Parse("00000000-0000-0000-0000-000000000001"), _aprovadaEm);
+        var reservada = await _gateway.GetReservadaByOrdemServicoIdAsync(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+        var ativa = await _gateway.GetAtivaByOrdemServicoIdAsync(Guid.Parse("00000000-0000-0000-0000-000000000001"));
         var pendentes = await _gateway.GetPendentesPorItemOrdenadasAsync(1);
 
         // Assert

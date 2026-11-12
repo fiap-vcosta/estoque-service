@@ -11,12 +11,12 @@ public enum ReservaEstoqueStatus
 public class ReservaEstoque
 {
     public int Id { get; set; }
-    public int OrdemServicoId { get; set; }
+    public Guid OrdemServicoId { get; set; }
     public DateTimeOffset AprovadaEm { get; set; }
     public ReservaEstoqueStatus Status { get; set; }
     public List<ReservaEstoqueItem> Itens { get; set; } = [];
 
-    public static ReservaEstoque CriarPendente(int ordemServicoId, DateTimeOffset aprovadaEm, IEnumerable<ReservaEstoqueItem> itens)
+    public static ReservaEstoque CriarPendente(Guid ordemServicoId, DateTimeOffset aprovadaEm, IEnumerable<ReservaEstoqueItem> itens)
     {
         return new ReservaEstoque
         {
@@ -27,7 +27,7 @@ public class ReservaEstoque
         };
     }
 
-    public static ReservaEstoque CriarReservada(int ordemServicoId, DateTimeOffset aprovadaEm, IEnumerable<ReservaEstoqueItem> itens)
+    public static ReservaEstoque CriarReservada(Guid ordemServicoId, DateTimeOffset aprovadaEm, IEnumerable<ReservaEstoqueItem> itens)
     {
         return new ReservaEstoque
         {

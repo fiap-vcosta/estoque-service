@@ -6,7 +6,7 @@ namespace Infrastructure.Database.Gateways;
 
 public class OrdemDescartadaGateway(AppDbContext context) : IOrdemDescartadaGateway
 {
-    public Task<bool> ExisteAsync(int ordemServicoId, CancellationToken cancellationToken = default) =>
+    public Task<bool> ExisteAsync(Guid ordemServicoId, CancellationToken cancellationToken = default) =>
         context.OrdensDescartadas.AnyAsync(o => o.OrdemServicoId == ordemServicoId, cancellationToken);
 
     public async Task AddAsync(OrdemDescartada ordem, CancellationToken cancellationToken = default)

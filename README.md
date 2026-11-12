@@ -1,5 +1,11 @@
 # estoque-service
 
+[![Quality Gate](https://sonarcloud.io/api/project_badges/quality_gate?project=fiap-vcosta_estoque-service)](https://sonarcloud.io/summary/new_code?id=fiap-vcosta_estoque-service)
+[![Reliability](https://sonarcloud.io/api/project_badges/measure?project=fiap-vcosta_estoque-service&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=fiap-vcosta_estoque-service)
+[![Security](https://sonarcloud.io/api/project_badges/measure?project=fiap-vcosta_estoque-service&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=fiap-vcosta_estoque-service)
+[![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=fiap-vcosta_estoque-service&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=fiap-vcosta_estoque-service)
+[![Duplications](https://sonarcloud.io/api/project_badges/measure?project=fiap-vcosta_estoque-service&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=fiap-vcosta_estoque-service)
+
 Serviço de estoque da oficina: item, entrada, reserva com `FOR UPDATE`, consumo, liberação e fila de pendências pela ordem de aprovação. Publica `EstoqueReservado` / `EstoqueEmFalta` e consome aprovação, finalização e descarte da ordem de serviço.
 
 Stack: .NET 8, PostgreSQL, Google Pub/Sub (building-blocks). Org [fiap-vcosta](https://github.com/fiap-vcosta).

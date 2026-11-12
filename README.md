@@ -50,6 +50,10 @@ dotnet test tests/IntegrationTests/IntegrationTests.csproj -c Release
 
 `ServiceAuth__Key` / `X-Service-Key` vem do org secret `SERVICE_AUTH_KEY` (mesmo valor em todos os serviços).
 
+## Terraform (GCP)
+
+Root module: [`terraform/`](terraform/). Cria a própria instância Cloud SQL (`estoque-service-pg`, `db-f1-micro`); VPC e SA de runtime via [`infra-bootstrap`](https://github.com/fiap-vcosta/infra-bootstrap). Decisão de sistema: [ADR no e2e](https://github.com/fiap-vcosta/e2e/blob/main/docs/adrs/001-instancia-cloud-sql-por-servico.md).
+
 ## Deploy (GCP)
 
 `tf-apply` / `deploy` manuais (`workflow_dispatch`). Smoke: `/estoque/health` + CRUD staff via Gateway; workers com publish manual nos tópicos após o `demo-up`.
